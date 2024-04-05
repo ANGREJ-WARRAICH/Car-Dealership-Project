@@ -1,0 +1,11 @@
+{"level":"error","message":"User already exists","timestamp":"2024-04-05T13:45:45.851Z"}
+{"level":"info","message":"Login Successfully","timestamp":"2024-04-05T13:53:37.043Z"}
+{"level":"info","message":"Invalid route","timestamp":"2024-04-05T13:53:39.134Z"}
+{"level":"info","message":"Invalid route","timestamp":"2024-04-05T13:53:50.412Z"}
+{"level":"info","message":"Logout Successfully","timestamp":"2024-04-05T13:54:11.132Z"}
+{"level":"error","message":"Invalid Email or Password","timestamp":"2024-04-05T13:54:35.212Z"}
+{"level":"info","message":"Login Successfully","timestamp":"2024-04-05T13:54:54.301Z"}
+{"level":"info","message":"Invalid route","timestamp":"2024-04-05T13:54:56.375Z"}
+{"level":"info","message":"Invalid route","timestamp":"2024-04-05T13:55:09.682Z"}
+{"level":"info","message":"Car Deleted Successfully","timestamp":"2024-04-05T14:09:31.445Z"}
+{"level":"info","message":"Invalid route","timestamp":"2024-04-05T14:09:50.366Z"}
