@@ -1,0 +1,83 @@
+/* Group members:
+
+Angrej Singh - 026
+Akashdeep Singh Gill - 925
+Karanpreet Sachdeva - 994
+Riya Sidhu - 435
+Manmeet Kaur - 039 */
+
+.navbar_bg {
+    background-image: linear-gradient(to bottom, #70a1ff, #ffb74d);
+}
+.image_bg {
+  background-image: url('./assets/images/background.jpg');
+  background-size: cover; 
+  background-repeat: no-repeat;
+}
+.cursor_button{
+  cursor: pointer;
+}
+.set_responsive_width_for_auth {
+  width: 50%;
+  padding: 40px;
+}
+.CarButton {
+  background-image: linear-gradient(to bottom, #ffb74d, #70a1ff);
+  width: 50%;
+}
+.page_not_found_div {
+  height: 100vh;
+  align-content: center;
+  text-align: center;
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.action_table_field{
+  width: 25%;
+}
+
+.main_card:hover {
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+@media only screen and (max-width: 1024px) {
+  .set_responsive_width_for_auth {
+    width: 80%;
+  }
+  .CarButton {
+    width: 50%;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .CarButton {
+    width: 30%;
+  }
+  .action_table_field{
+    width: auto;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .set_responsive_width_for_auth {
+    width: 100%;
+  }
+  .CarButton {
+    width: 30%;
+  }
+}
+
+@media only screen and (max-width: 460px) {
+  .set_responsive_width_for_auth {
+    width: 100%;
+    padding: 20px;
+  }
+  .CarButton {
+    width: 100%;
+  }
+}
