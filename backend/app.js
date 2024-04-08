@@ -145,7 +145,7 @@ app.post("/login", async (req, res, next) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    logger.info("Logout Successfully");
+    logger.info("Login Successfully");
     return res
       .status(200)
       .cookie("token", token, {
