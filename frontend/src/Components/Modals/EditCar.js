@@ -142,6 +142,8 @@ const EditCar = (props) => {
           setErrorMessage("");
           toast.success(response.data.message);
           handleEditModalClose();
+          setCarInfo({})
+          setImagePreview("")
         } else {
           const response = await axios.post(
             "http://localhost:8000/car",
@@ -157,6 +159,8 @@ const EditCar = (props) => {
           setErrorMessage("");
           toast.success(response.data.message);
           handleEditModalClose();
+          setCarInfo({})
+          setImagePreview("")
         }
       } catch (error) {
         toast.error(error.response.data.message || error.message);
@@ -213,7 +217,7 @@ const EditCar = (props) => {
                     <Form.Label>Year</Form.Label>
                     <Form.Control
                       type="number"
-                      placeholder="Enter modal"
+                      placeholder="Enter year"
                       value={carInfo?.year ? carInfo?.year : ""}
                       onChange={(e) =>
                         setCarInfo({ ...carInfo, year: e.target.value })
@@ -308,7 +312,7 @@ const EditCar = (props) => {
                     <Form.Label>Mileage(kmpl)</Form.Label>
                     <Form.Control
                       type="number"
-                      placeholder="Enter model price"
+                      placeholder="Enter mileage"
                       value={carInfo.mileage ? carInfo.mileage : ""}
                       onChange={(e) =>
                         setCarInfo({ ...carInfo, mileage: e.target.value })

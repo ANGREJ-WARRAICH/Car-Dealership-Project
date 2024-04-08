@@ -1,10 +1,3 @@
-
-// Angrej Singh - 026
-// Akashdeep Singh Gill - 925
-// Karanpreet Sachdeva - 994
-// Riya Sidhu - 435
-// Manmeet Kaur - 039
-
 import React from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";

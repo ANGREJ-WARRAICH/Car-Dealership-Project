@@ -1,12 +1,3 @@
-// Group members:
-
-// Angrej Singh - 026
-// Akashdeep Singh Gill - 925
-// Karanpreet Sachdeva - 994
-// Riya Sidhu - 435
-// Manmeet Kaur - 039
-
-
 import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
@@ -45,7 +36,7 @@ const CarDetails = (props) => {
 
   return (
     <>
-      <Container className="mt-5">
+      <Container className="mainContainer mt-5">
         <Row>
           <Col lg={6}>
             <Image

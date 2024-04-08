@@ -1,11 +1,3 @@
-// Group members:
-
-// Angrej Singh - 026
-// Akashdeep Singh Gill - 925
-// Karanpreet Sachdeva - 994
-// Riya Sidhu - 435
-// Manmeet Kaur - 039
-
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -20,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CarRequest from "./CarRequest";
 import PageNotFound from "./PageNotFound";
+import Footer from "./Components/Footer/Footer";
 
 function App() {
   const [Istoken, setIstoken] = useState("");
@@ -39,6 +32,7 @@ function App() {
               <>
                 <Header />
                 <Dashboard />
+                <Footer />
               </>
             }
           />
@@ -48,6 +42,7 @@ function App() {
               <>
                 <Header />
                 <CarRequest />
+                <Footer />
               </>
             }
           />
@@ -58,6 +53,7 @@ function App() {
               <>
                 <Header />
                 <CarDetails />
+                <Footer />
               </>
             }
           />

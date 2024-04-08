@@ -3,13 +3,10 @@ import axios from "axios";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import logo from "../../assets/images/logo.png";
 import AuthCheck from "../AuthCheck/AuthCheck";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
 const Header = (props) => {
@@ -23,7 +20,8 @@ const Header = (props) => {
       Cookies.remove("token");
       Cookies.remove("type");
       Cookies.remove("user_Id");
-
+      Cookies.remove("user_Email");
+      Cookies.remove("user_Name");
       setTimeout(() => {
         navigate("/login");
       }, 1500);
@@ -44,13 +42,15 @@ const Header = (props) => {
             <Nav className="ms-auto">
               {auth && (
                 <Nav.Item
-                className="cursor_button"
-                onClick={() => navigate("/pendingcars")}
+                  className="cursor_button"
+                  onClick={() => navigate("/pendingcars")}
                 >
                   Car Request
                 </Nav.Item>
               )}
-              <Nav.Item className="mx-lg-3">{auth ? "Admin" : "Salesperson"}</Nav.Item>
+              <Nav.Item className="mx-lg-3">
+                {auth ? "Admin" : "Salesperson"}
+              </Nav.Item>
               <Nav.Item
                 className="cursor_button"
                 onClick={() => handleLogout()}

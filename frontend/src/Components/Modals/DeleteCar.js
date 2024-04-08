@@ -15,7 +15,7 @@ const DeleteCar = (props) => {
             Close
           </Button>
           <Button variant="danger" onClick={handleConformDelete}>
-            Conform
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>

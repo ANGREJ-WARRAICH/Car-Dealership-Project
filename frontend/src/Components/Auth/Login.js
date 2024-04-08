@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const navigation = useNavigate();
@@ -16,6 +17,7 @@ const Login = () => {
     emailError: "",
     passwordError: "",
   });
+  const [captchaValue, setCaptchaValue] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,13 +31,16 @@ const Login = () => {
         passwordError: "Please Enter Password",
       });
       return;
+    } else if (!captchaValue) {
+      toast.error("Please complete the CAPTCHA.");
+      return;
     }
     setIsLoading(true);
     setErrorMessage("");
     try {
       const response = await axios.post(
         "http://localhost:8000/login",
-        formData
+        { ...formData, captchaValue }
       );
       if (response.status !== 200) {
         toast.error(response.data.message);
@@ -49,6 +54,7 @@ const Login = () => {
         email: "",
         password: "",
       });
+      setCaptchaValue("");
       setTimeout(() => {
         setIsLoading(false);
         navigation("/dashboard");
@@ -102,6 +108,11 @@ const Login = () => {
                 {errorMessage.passwordError ? errorMessage.passwordError : ""}
               </span>
             </Form.Group>
+
+            <ReCAPTCHA
+              sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              onChange={(value) => setCaptchaValue(value)}
+            />
 
             <Button variant="primary" type="submit" className="w-100">
               {isLoading ? " Loading..." : "Login"}

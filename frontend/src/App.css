@@ -1,11 +1,3 @@
-/* Group members:
-
-Angrej Singh - 026
-Akashdeep Singh Gill - 925
-Karanpreet Sachdeva - 994
-Riya Sidhu - 435
-Manmeet Kaur - 039 */
-
 .navbar_bg {
     background-image: linear-gradient(to bottom, #70a1ff, #ffb74d);
 }
@@ -13,6 +5,10 @@ Manmeet Kaur - 039 */
   background-image: url('./assets/images/background.jpg');
   background-size: cover; 
   background-repeat: no-repeat;
+}
+.mainContainer{
+  height: calc(100vh - 150px);
+  overflow-y: auto;
 }
 .cursor_button{
   cursor: pointer;

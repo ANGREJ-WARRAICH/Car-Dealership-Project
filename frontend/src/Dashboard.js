@@ -1,12 +1,3 @@
-// Group members:
-
-// Angrej Singh - 026
-// Akashdeep Singh Gill - 925
-// Karanpreet Sachdeva - 994
-// Riya Sidhu - 435
-// Manmeet Kaur - 039
-
-
 import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
@@ -61,30 +52,27 @@ const Dashboard = (props) => {
           },
           withCredentials: true,
         });
-        // console.log("response===========>",response);
         const totalCars = responseOfCars.data.cars
         const filterData = response.data.cars.filter(
-          (res) => res.userId[0]._id === user_Id
+          (res) => res.userId[0]?._id === user_Id
         );
 
         // Extracting carId and carStatus into a new array
         const newArray = filterData.map((entry) => {
-          console.log("entry:::::::::::",entry);
           return {
-            carId: entry.carId[0]._id,
+            carId: entry.carId[0]?._id,
             carStatus: entry.carStatus,
           };
         })
 
         totalCars.forEach((car) => {
           const matchingStatus = newArray.find(
-            (status) => status.carId === car._id
+            (status) => status?.carId === car?._id
           );
           if (matchingStatus) {
             car.carStatus = matchingStatus.carStatus;
           }
         });
-        // console.log("main car:::::::::", totalCars);
         setCarList(totalCars);
       } catch (error) {
         console.error("Error fetching car data:::::::::", error);
@@ -102,7 +90,7 @@ const Dashboard = (props) => {
 
   return (
     <>
-      <Container>
+      <Container className="mainContainer">
         <div className="d-flex justify-content-between flex-column flex-lg-row my-4">
           <div className="w-100">
             <h3>Car List</h3>

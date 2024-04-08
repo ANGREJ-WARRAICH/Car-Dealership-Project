@@ -7,19 +7,18 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import {
   Button,
-  Card,
-  Col,
   Container,
   Image,
-  Row,
   Table,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
+import Spinner from "react-bootstrap/Spinner";
 
 const AllCars = (props) => {
   const { data, auth } = props;
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteId, setDeleteId] = useState();
   const [editId, setEditId] = useState();
@@ -63,7 +62,6 @@ const AllCars = (props) => {
           },
           withCredentials: true,
         });
-        console.log("response===========>",response);
         const totalCars = responseOfCars.data.cars;
         const filterData = response.data.cars.filter(
           (res) => res.userId[0]._id === user_Id
@@ -85,13 +83,12 @@ const AllCars = (props) => {
             car.carStatus = matchingStatus.carStatus;
           }
         });
-        console.log("main car:::::::::", totalCars);
         setCarList(totalCars);
       } catch (error) {
-        console.error("Error fetching car data:::::::::", error);
+        toast.error(error.response.data.message || error.message);
       }
     } catch (error) {
-      console.error("Error fetching car data:", error);
+      toast.error(error.response.data.message || error.message);
     }
   };
 
@@ -120,8 +117,21 @@ const AllCars = (props) => {
 
   const handleBuy = async (id) => {
     try {
+      setIsloading(true);
       let token = Cookies.get("token");
       const userId = Cookies.get("user_Id");
+      const res = await axios.post(
+        "http://localhost:8000/emailSend",
+        { _id: userId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      toast.success(res.data.message);
+      setIsloading(false);
       const data = {
         userId,
         CarId: id,
@@ -137,9 +147,9 @@ const AllCars = (props) => {
           withCredentials: true,
         }
       );
-      // console.log(response?.data);
       if (response?.data?.success) fetchCarData();
     } catch (error) {
+      setIsloading(false);
       toast.error(error.response.data.message || error.message);
     }
   };
@@ -220,21 +230,29 @@ const AllCars = (props) => {
                           className="btn btn-info btn-md me-2"
                           onClick={() => handleBuy(item._id)}
                         >
-                          Buy
+                          {isloading ? (
+                            <Spinner
+                              animation="border"
+                              variant="dark"
+                              size="sm"
+                            />
+                          ) : (
+                            "Buy"
+                          )}
                         </button>
                       )}
                       {item.carStatus === "Pending" && (
-                        <h5 className="mb-0 align-content-center text-warning">
+                        <h5 className="mb-0 align-content-center text-warning mt-0 mt-md-2">
                           Approval Pending
                         </h5>
                       )}
                       {item.carStatus === "Sold" && (
-                        <h5 className="mb-0 align-content-center text-success">
+                        <h5 className="mb-0 align-content-center text-success mt-0 mt-md-2">
                           Sold
                         </h5>
                       )}
                       {item.carStatus === "Rejected" && (
-                        <h5 className="mb-0 align-content-center text-danger">
+                        <h5 className="mb-0 align-content-center text-danger mt-0 mt-md-2">
                           Rejected
                         </h5>
                       )}
@@ -246,7 +264,7 @@ const AllCars = (props) => {
           </Table>
           {carList.length === 0 && (
             <h5 className="text-center">Cars not found</h5>
-          )}  
+          )}
         </div>
       </Container>
       <DeleteCar

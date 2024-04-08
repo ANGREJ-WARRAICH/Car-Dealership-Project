@@ -1,12 +1,3 @@
-// Group members:
-
-// Angrej Singh - 026
-// Akashdeep Singh Gill - 925
-// Karanpreet Sachdeva - 994
-// Riya Sidhu - 435
-// Manmeet Kaur - 039
-
-
 import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
@@ -71,9 +62,11 @@ const CarRequest = () => {
     }
   };
 
+  console.log("carData",carData);
+
   return (
     <>
-      <Container>
+      <Container className="mainContainer">
         <div className="table-responsive mt-4">
           <Table striped bordered hover>
             <thead>
@@ -94,45 +87,45 @@ const CarRequest = () => {
                   <td className="text-center align-content-center">
                     {index + 1}
                   </td>
-                  <td style={{ width: "150px" }}>
-                    <Image
-                      src={`http://localhost:8000/${item.carId[0].photo}`}
+                  <td style={{ width: "150px", textAlign:"center" }}>
+                    {item?.carId[0]?.photo ?  <Image
+                      src={`http://localhost:8000/${item?.carId[0]?.photo}`}
                       width={150}
                       height={80}
-                    />
+                    /> : "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.carId[0].make}
+                    {item?.carId[0]?.make || "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.carId[0].model}
+                    {item?.carId[0]?.model || "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.carId[0].year}
+                    {item?.carId[0]?.year || "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.carId[0].price}
+                    {item?.carId[0]?.price || "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.userId[0].name}
+                    {item?.userId[0]?.name || "not found"}
                   </td>
                   <td className="text-center align-content-center">
-                    {item.carStatus === "Sold" ? (
+                    {item?.carStatus === "Sold" ? (
                       <h5 className="text-success">Approved</h5>
-                    ) : item.carStatus === "Rejected" ? (
+                    ) : item?.carStatus === "Rejected" ? (
                       <h5 className="text-danger">Rejected</h5>
                     ) : (
                       <>
                         <Button
                           className="btn btn-primary me-0 me-md-3 mb-2 mb-lg-0"
-                          onClick={() => handleApprove(item._id)}
+                          onClick={() => handleApprove(item?._id)}
                         >
                           Approve
                         </Button>
                         <Button
                           className="btn btn-danger"
                           onClick={() =>
-                            handleReject(item._id,)
+                            handleReject(item?._id,)
                           }
                         >
                           Reject
