@@ -18,6 +18,10 @@ const multer = require("multer");
 const fs = require("fs/promises");
 const CarStatus = require("./models/CarStatus");
 const { ObjectId } = require("mongodb");
+const passwordValidator = require("password-validator");
+const passwordSchema = new passwordValidator();
+const nodemailer = require("nodemailer");
+const { config } = require("dotenv");
 const winston = require('winston');
 var date = Date.now();
 const logger = winston.createLogger({
@@ -30,6 +34,7 @@ const logger = winston.createLogger({
     winston.format.json()
   )
 });
+config({ path: "./config.env" });
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -40,6 +45,22 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// Add properties to the schema
+passwordSchema
+  .is()
+  .min(8)
+  .is()
+  .max(100)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits()
+  .has()
+  .not()
+  .spaces();
+
 app.post("/register", async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
@@ -47,6 +68,14 @@ app.post("/register", async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+    // Validate password against the schema
+    if (!passwordSchema.validate(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password Must be at least 8 characters long. Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       });
     }
     let user = await User.findOne({ email });
@@ -81,9 +110,7 @@ app.post("/register", async (req, res, next) => {
         token,
         user,
       });
-      
   } catch (error) {
-    logger.error(error);
     next(error);
   }
 });
@@ -101,12 +128,12 @@ app.post("/login", async (req, res, next) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      logger.error("User Not Found");
       return res.status(404).json({
         success: false,
         message: "User Not Found",
       });
     }
+
     const checkPassword = await bcrypt.compare(password, user.password);
     if (!checkPassword) {
       logger.error("Invalid Email or Password");
@@ -118,7 +145,7 @@ app.post("/login", async (req, res, next) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    logger.info("Login Successfully");
+    logger.info("Logout Successfully");
     return res
       .status(200)
       .cookie("token", token, {
@@ -139,7 +166,6 @@ app.post("/login", async (req, res, next) => {
 
 app.get("/logout", (req, res, next) => {
   try {
-    logger.info("Logout Successfully");
     return res
       .status(200)
       .cookie("token", null, {
@@ -150,41 +176,6 @@ app.get("/logout", (req, res, next) => {
         success: true,
         message: "Logout Successfully",
       });
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.post("/carbuy", async (req, res, next) => {
-  try {
-    const { id, status } = req.body;
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Id is required",
-      });
-    }
-    const getCar = await Car.findById(id);
-    if (!getCar) {
-      logger.error("Car not found");
-      return res.status(404).json({
-        success: false,
-        message: "Car not found",
-      });
-    }
-
-    getCar.carStatus =
-      getCar.carStatus === ""
-        ? "Pending"
-        : status === "reject"
-        ? "Rejected"
-        : "Sold";
-    await getCar.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Car status updated to Pending",
-    });
   } catch (error) {
     next(error);
   }
@@ -242,11 +233,62 @@ app.post(
         message: "Car Created Successfully",
       });
     } catch (error) {
-      logger.error(error);
       next(error);
     }
   }
 );
+
+app.post("/emailSend", isAuth, async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    let user = await User.findById({ _id });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User Not Found",
+      });
+    }
+    console.log("useruser::::::", user);
+    console.log("process.env.EMAIL,::::::", process.env.EMAIL);
+    console.log("process.env.PASSWORD::::::", process.env.PASSWORD);
+
+    const transporter = await nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      // to: user.email,
+      to: "lambtoncar22@gmail.com",
+      subject: "Request to admin for approval",
+      html: `<p>Dear Admin,</p>
+      <p>I hope this message finds you well. I wanted to inform you that a new car request has been submitted by ${user.name}. Kindly review the request at your earliest convenience.</p>
+      <p>Thank you for your attention to this matter.</p>`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        res.status(400).send({ success: false, message: error.message });
+      } else {
+        return res.status(201).json({
+          success: true,
+          message: "Mail has been send",
+          info,
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send({ success: false, message: error.message });
+  }
+});
+
 // car status
 app.post("/carStatus", isAuth, async (req, res, next) => {
   try {
@@ -256,7 +298,6 @@ app.post("/carStatus", isAuth, async (req, res, next) => {
       CarId: new ObjectId(CarId),
       carStatus,
     });
-    logger.info("Car status added");
     return res.status(201).json({
       success: true,
       message: "Car status added",
@@ -265,27 +306,11 @@ app.post("/carStatus", isAuth, async (req, res, next) => {
     next(error);
   }
 });
-// car status update
-app.put("/carStatus/:id", isAuth, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { carStatus } = req.body;
-    await CarStatus.findByIdAndUpdate(id,{
-      carStatus,
-    });
-    logger.info("Car status updated");
-    return res.status(201).json({
-      success: true,
-      message: "Car status updated",
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+
 // get car status
 app.get("/CarStatus", isAuth, async (req, res, next) => {
   try {
-    const cars = await CarStatus.aggregate([
+    const getCars = await CarStatus.aggregate([
       {
         $lookup: {
           from: "users",
@@ -314,7 +339,24 @@ app.get("/CarStatus", isAuth, async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Cars fetched Successfully",
-      cars,
+      cars: getCars,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// car status update
+app.put("/carStatus/:id", isAuth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { carStatus } = req.body;
+    await CarStatus.findByIdAndUpdate(id, {
+      carStatus,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Car status updated",
     });
   } catch (error) {
     next(error);
@@ -447,7 +489,7 @@ app.delete("/car/:id", isAuth, isAdmin("admin"), async (req, res, next) => {
     }
     await fs.unlink(car.photo);
     await car.deleteOne();
-    logger.info("Car Deleted Successfully");
+
     return res.status(200).json({
       success: true,
       message: "Car Deleted Successfully",
@@ -459,7 +501,6 @@ app.delete("/car/:id", isAuth, isAdmin("admin"), async (req, res, next) => {
 
 app.use("*", (req, res, next) => {
   try {
-    logger.info("Invalid route");
     return res.status(404).json({
       success: false,
       message: "Route Not Found",
